@@ -17,6 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,6 +27,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final EmployeeClient employeeClient;
+    private final SendService sendService;
     private final TaskMapper mapper;
 
     @Override
@@ -33,9 +37,18 @@ public class TaskServiceImpl implements TaskService {
                 request.getStatus() == null ? Status.TO_DO : request.getStatus()
         );
 
-        return mapper.map(
+        TaskResponse taskResponse = mapper.map(
                 taskRepository.save(taskToSave)
         );
+
+        TaskDetailed taskDetailed = mapper.map(taskResponse);
+        String employeeId = taskResponse.getEmployeeId();
+        EmployeeDTO employee = employeeClient.getEmployeeById(employeeId);
+        taskDetailed.setEmployee(employee);
+
+        sendService.sendMessage(taskDetailed);
+
+        return taskResponse;
     }
 
     @Override
@@ -77,8 +90,25 @@ public class TaskServiceImpl implements TaskService {
 
         // Task
         // allTasks -> distinct employeeIds -> request to employee-core-api
+        List<String> uniqueEmployeeIds = allTasks.map(
+                        TaskResponse::getEmployeeId
+                )
+                .stream()
+                .distinct()
+                .toList();
 
-        return null;
+        Map<String, EmployeeDTO> employees = employeeClient
+                .getEmployeesByList(uniqueEmployeeIds);
+
+        return allTasks.map(
+                task -> {
+                    EmployeeDTO employee = employees.get(task.getEmployeeId());
+                    TaskDetailed taskDetailed = mapper.map(task);
+                    taskDetailed.setEmployee(employee);
+
+                    return taskDetailed;
+                }
+        );
     }
 
     @Override

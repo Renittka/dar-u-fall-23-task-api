@@ -10,7 +10,7 @@ public class ElasticConfig extends ElasticsearchConfiguration {
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
-                .connectedTo("tasks.es.us-central1.gcp.cloud.es.io:9243")
+                .connectedTo("tasks-39522c.kb.us-central1.gcp.cloud.es.io:9243")
                 .usingSsl()
                 .withBasicAuth("elastic", "pass")
                 .build();

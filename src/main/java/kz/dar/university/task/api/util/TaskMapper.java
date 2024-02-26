@@ -24,5 +24,4 @@ public interface TaskMapper {
 
     TaskDetailed map(TaskResponse response);
 
-
 }
