@@ -22,6 +22,8 @@ public interface TaskMapper {
 
     TaskResponse map(Task task);
 
+    TaskDetailed mapToDetailed(Task task);
+
     TaskDetailed map(TaskResponse response);
 
 }

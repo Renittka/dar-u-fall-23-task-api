@@ -7,15 +7,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class TaskRequest {
+
     private String taskId;
     @NotNull
     private String employeeId;
     @NotNull
     private String title;
     private Status status;
+    private Map<String, String> files;
+
 }

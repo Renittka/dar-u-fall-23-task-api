@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,5 +19,6 @@ public class TaskDetailed {
     private EmployeeDTO employee;
     private String title;
     private Status status;
+    private Map<String, String> files;
 
 }

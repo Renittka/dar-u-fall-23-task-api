@@ -10,11 +10,14 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-@Document(indexName = "tasks")
+@Document(indexName = "test-task-with-files")
 public class Task {
     @Id
     private String taskId;
@@ -24,4 +27,6 @@ public class Task {
     private String title;
     @Field(type = FieldType.Auto)
     private Status status;
+    @Field(type = FieldType.Auto)
+    private Map<String, String> files;
 }

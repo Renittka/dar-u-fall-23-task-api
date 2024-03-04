@@ -31,24 +31,24 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper mapper;
 
     @Override
-    public TaskResponse createTask(TaskRequest request) {
+    public TaskDetailed createTask(TaskRequest request) {
+        log.info("Request: " + request);
         Task taskToSave = mapper.map(request);
         taskToSave.setStatus(
                 request.getStatus() == null ? Status.TO_DO : request.getStatus()
         );
+        taskRepository.save(taskToSave);
+        log.info("Task: " + taskToSave);
 
-        TaskResponse taskResponse = mapper.map(
-                taskRepository.save(taskToSave)
-        );
-
-        TaskDetailed taskDetailed = mapper.map(taskResponse);
-        String employeeId = taskResponse.getEmployeeId();
+        TaskDetailed taskDetailed = mapper.mapToDetailed(taskToSave);
+        String employeeId = taskToSave.getEmployeeId();
         EmployeeDTO employee = employeeClient.getEmployeeById(employeeId);
         taskDetailed.setEmployee(employee);
 
+        log.info("Task detailed: " + taskDetailed);
         sendService.sendMessage(taskDetailed);
 
-        return taskResponse;
+        return taskDetailed;
     }
 
     @Override
